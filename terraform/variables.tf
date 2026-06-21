@@ -20,3 +20,9 @@ variable "project" {
   type        = string
   default     = "hub-spoke-network"
 }
+
+variable "vm_admin_password" {
+  description = "Admin password for test VMs"
+  type        = string
+  sensitive   = true
+}
