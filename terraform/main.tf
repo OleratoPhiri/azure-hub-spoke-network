@@ -80,3 +80,43 @@ module "vm_dev" {
   subnet_id           = module.spoke_dev.workload_subnet_id
   admin_password      = var.vm_admin_password
 }
+
+module "nsg_prod" {
+  source              = "./modules/nsg"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = var.location
+  environment         = var.environment
+  project             = var.project
+  spoke_name          = "prod"
+  subnet_id           = module.spoke_prod.workload_subnet_id
+}
+
+module "nsg_dev" {
+  source              = "./modules/nsg"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = var.location
+  environment         = var.environment
+  project             = var.project
+  spoke_name          = "dev"
+  subnet_id           = module.spoke_dev.workload_subnet_id
+}
+
+module "route_table_prod" {
+  source              = "./modules/route_table"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = var.location
+  environment         = var.environment
+  project             = var.project
+  spoke_name          = "prod"
+  subnet_id           = module.spoke_prod.workload_subnet_id
+}
+
+module "route_table_dev" {
+  source              = "./modules/route_table"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = var.location
+  environment         = var.environment
+  project             = var.project
+  spoke_name          = "dev"
+  subnet_id           = module.spoke_dev.workload_subnet_id
+}
