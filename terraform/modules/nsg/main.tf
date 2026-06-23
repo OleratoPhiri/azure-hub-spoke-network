@@ -1,7 +1,7 @@
 resource "azurerm_network_security_group" "spoke" {
-  name                = "nsg-${var.spoke_name}-${var.environment}"
+  name                = "nsg-${var.spoke_name}-${var.env}"
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = var.rg_name
 
   # Allow SSH inbound for testing connectivity between VMs
   security_rule {
@@ -69,7 +69,7 @@ resource "azurerm_network_security_group" "spoke" {
   }
 
   tags = {
-    environment = var.environment
+    environment = var.env
     project     = var.project
     managed_by  = "terraform"
   }

@@ -9,7 +9,7 @@ variable "location" {
   default     = "South Africa North"
 }
 
-variable "environment" {
+variable "env" {
   description = "Environment tag applied to all resources"
   type        = string
   default     = "dev"

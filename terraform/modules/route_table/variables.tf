@@ -1,4 +1,4 @@
-variable "resource_group_name" {
+variable "rg_name" {
   description = "Resource group for the route table"
   type        = string
 }
@@ -8,7 +8,7 @@ variable "location" {
   type        = string
 }
 
-variable "environment" {
+variable "env" {
   description = "Environment tag"
   type        = string
 }
@@ -28,7 +28,7 @@ variable "subnet_id" {
   type        = string
 }
 
-variable "firewall_private_ip" {
+variable "fw_private_ip" {
   description = "Private IP of the Azure Firewall in the hub — updated in Phase 4"
   type        = string
   default     = "10.0.1.4"

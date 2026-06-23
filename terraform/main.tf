@@ -1,9 +1,9 @@
 resource "azurerm_resource_group" "main" {
-  name     = "rg-${var.project}-${var.environment}"
+  name     = "rg-${var.project}-${var.env}"
   location = var.location
 
   tags = {
-    environment = var.environment
+    environment = var.env
     project     = var.project
     managed_by  = "terraform"
   }
@@ -11,17 +11,17 @@ resource "azurerm_resource_group" "main" {
 
 module "hub_vnet" {
   source              = "./modules/hub_vnet"
-  resource_group_name = azurerm_resource_group.main.name
+  rg_name             = azurerm_resource_group.main.name
   location            = var.location
-  environment         = var.environment
+  env                 = var.env
   project             = var.project
 }
 
 module "spoke_prod" {
   source               = "./modules/spoke_vnet"
-  resource_group_name  = azurerm_resource_group.main.name
+  rg_name              = azurerm_resource_group.main.name
   location             = var.location
-  environment          = var.environment
+  env                  = var.env
   project              = var.project
   spoke_name           = "prod"
   spoke_vnet_cidr      = "10.1.0.0/16"
@@ -30,9 +30,9 @@ module "spoke_prod" {
 
 module "spoke_dev" {
   source               = "./modules/spoke_vnet"
-  resource_group_name  = azurerm_resource_group.main.name
+  rg_name              = azurerm_resource_group.main.name
   location             = var.location
-  environment          = var.environment
+  env                  = var.env
   project              = var.project
   spoke_name           = "dev"
   spoke_vnet_cidr      = "10.2.0.0/16"
@@ -41,7 +41,7 @@ module "spoke_dev" {
 
 module "peering_prod" {
   source              = "./modules/peering"
-  resource_group_name = azurerm_resource_group.main.name
+  rg_name             = azurerm_resource_group.main.name
   hub_vnet_name       = module.hub_vnet.hub_vnet_name
   hub_vnet_id         = module.hub_vnet.hub_vnet_id
   spoke_vnet_name     = module.spoke_prod.spoke_vnet_name
@@ -51,7 +51,7 @@ module "peering_prod" {
 
 module "peering_dev" {
   source              = "./modules/peering"
-  resource_group_name = azurerm_resource_group.main.name
+  rg_name             = azurerm_resource_group.main.name
   hub_vnet_name       = module.hub_vnet.hub_vnet_name
   hub_vnet_id         = module.hub_vnet.hub_vnet_id
   spoke_vnet_name     = module.spoke_dev.spoke_vnet_name
@@ -61,9 +61,9 @@ module "peering_dev" {
 
 module "vm_prod" {
   source              = "./modules/vm_test"
-  resource_group_name = azurerm_resource_group.main.name
+  rg_name             = azurerm_resource_group.main.name
   location            = var.location
-  environment         = var.environment
+  env                 = var.env
   project             = var.project
   spoke_name          = "prod"
   subnet_id           = module.spoke_prod.workload_subnet_id
@@ -72,9 +72,9 @@ module "vm_prod" {
 
 module "vm_dev" {
   source              = "./modules/vm_test"
-  resource_group_name = azurerm_resource_group.main.name
+  rg_name             = azurerm_resource_group.main.name
   location            = var.location
-  environment         = var.environment
+  env                 = var.env
   project             = var.project
   spoke_name          = "dev"
   subnet_id           = module.spoke_dev.workload_subnet_id
@@ -83,9 +83,9 @@ module "vm_dev" {
 
 module "nsg_prod" {
   source              = "./modules/nsg"
-  resource_group_name = azurerm_resource_group.main.name
+  rg_name             = azurerm_resource_group.main.name
   location            = var.location
-  environment         = var.environment
+  env                 = var.env
   project             = var.project
   spoke_name          = "prod"
   subnet_id           = module.spoke_prod.workload_subnet_id
@@ -93,30 +93,44 @@ module "nsg_prod" {
 
 module "nsg_dev" {
   source              = "./modules/nsg"
-  resource_group_name = azurerm_resource_group.main.name
+  rg_name             = azurerm_resource_group.main.name
   location            = var.location
-  environment         = var.environment
+  env                 = var.env
   project             = var.project
   spoke_name          = "dev"
   subnet_id           = module.spoke_dev.workload_subnet_id
 }
 
 module "route_table_prod" {
-  source              = "./modules/route_table"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = var.location
-  environment         = var.environment
-  project             = var.project
-  spoke_name          = "prod"
-  subnet_id           = module.spoke_prod.workload_subnet_id
+  source                = "./modules/route_table"
+  rg_name               = azurerm_resource_group.main.name
+  location              = var.location
+  env                   = var.env
+  project               = var.project
+  spoke_name            = "prod"
+  subnet_id             = module.spoke_prod.workload_subnet_id
+  fw_private_ip         = module.fw.fw_private_ip
 }
 
 module "route_table_dev" {
-  source              = "./modules/route_table"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = var.location
-  environment         = var.environment
-  project             = var.project
-  spoke_name          = "dev"
-  subnet_id           = module.spoke_dev.workload_subnet_id
+  source                = "./modules/route_table"
+  rg_name               = azurerm_resource_group.main.name
+  location              = var.location
+  env                   = var.env
+  project               = var.project
+  spoke_name            = "dev"
+  subnet_id             = module.spoke_dev.workload_subnet_id
+  fw_private_ip         = module.fw.fw_private_ip
 }
+
+module "fw" {
+  source                = "./modules/firewall"
+  rg_name               = azurerm_resource_group.main.name
+  location              = var.location
+  env                   = var.env
+  project               = var.project
+  fw_subnet_id          = module.hub_vnet.firewall_subnet_id
+}
+
+
+

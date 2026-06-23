@@ -1,4 +1,4 @@
-variable "resource_group_name" {
+variable "rg_name" {
   description = "Resource group for the test VM"
   type        = string
 }
@@ -8,7 +8,7 @@ variable "location" {
   type        = string
 }
 
-variable "environment" {
+variable "env" {
   description = "Environment tag"
   type        = string
 }

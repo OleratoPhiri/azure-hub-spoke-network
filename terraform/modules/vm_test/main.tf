@@ -1,22 +1,22 @@
 # Public IP so we can verify connectivity from outside
 resource "azurerm_public_ip" "vm" {
-  name                = "pip-vm-${var.spoke_name}-${var.environment}"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  allocation_method   = "Static"
-  sku                 = "Standard"
+  name                   = "pip-vm-${var.spoke_name}-${var.env}"
+  location               = var.location
+  resource_group_name    = var.rg_name
+  allocation_method      = "Static"
+  sku                    = "Standard"
 
   tags = {
-    environment = var.environment
+    environment = var.env
     project     = var.project
     managed_by  = "terraform"
   }
 }
 
 resource "azurerm_network_interface" "vm" {
-  name                = "nic-vm-${var.spoke_name}-${var.environment}"
+  name                = "nic-vm-${var.spoke_name}-${var.env}"
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name             = var.rg_name
 
   ip_configuration {
     name                          = "internal"
@@ -26,16 +26,16 @@ resource "azurerm_network_interface" "vm" {
   }
 
   tags = {
-    environment = var.environment
+    environment = var.env
     project     = var.project
     managed_by  = "terraform"
   }
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
-  name                            = "vm-${var.spoke_name}-${var.environment}"
+  name                            = "vm-${var.spoke_name}-${var.env}"
   location                        = var.location
-  resource_group_name             = var.resource_group_name
+  resource_group_name             = var.rg_name
   size                            = "Standard_B2als_v2"
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
@@ -55,7 +55,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 
   tags = {
-    environment = var.environment
+    environment = var.env
     project     = var.project
     role        = "test-vm"
     managed_by  = "terraform"
