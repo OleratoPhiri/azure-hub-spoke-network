@@ -10,14 +10,14 @@ output "fw_public_ip" {
     value       = azurerm_public_ip.fw_pip.ip_address
 }
 
-output "fw_id" {
-    type        = string
-    description = "Hub firewall ID"
-    value       = azurerm_firewall.hub.id
-}
 
 output "fw_name" {
     type        = string
     description = "Hub firewall name"
     value       = azurerm_firewall.hub.name
+}
+
+output "fw_id" {
+  description = "ID of the Azure Firewall"
+  value       = azurerm_firewall.hub.id
 }

@@ -132,5 +132,14 @@ module "fw" {
   fw_subnet_id          = module.hub_vnet.firewall_subnet_id
 }
 
-
+module "monitoring" {
+  source      = "./modules/monitoring"
+  rg_name     = azurerm_resource_group.main.name
+  location    = var.location
+  env         = var.env
+  project     = var.project
+  firewall_id = module.fw.fw_id
+  vm_prod_id  = module.vm_prod.vm_id
+  vm_dev_id   = module.vm_dev.vm_id
+}
 

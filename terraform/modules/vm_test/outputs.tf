@@ -1,3 +1,8 @@
+output "vm_id" {
+  description = "ID of the test VM"
+  value       = azurerm_linux_virtual_machine.vm.id
+}
+
 output "vm_private_ip" {
   description = "Private IP of the test VM"
   value       = azurerm_network_interface.vm.private_ip_address
